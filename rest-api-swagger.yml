@@ -1,0 +1,128 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Networking App
+host: localhost:8080
+basePath: /user
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /{user}/message:
+    post:
+      summary: Post a message
+      operationId: postMessage
+      parameters:
+        - name: user
+          in: path
+          description: User who is sending the message
+          required: true
+          type: string
+      responses:
+        "201":
+          description: The message successfully sent.
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /{user}/follow/{followingUser}:
+    put:
+      summary: Follow a user
+      operationId: follow
+      parameters:
+        - name: user
+          in: path
+          description: User who is following
+          required: true
+          type: string
+        - name: followingUser
+          in: path
+          description: User who will be followed
+          required: true
+          type: string
+      responses:
+        "202":
+          description: Following request accepted successfully.
+        "404":
+          description: User not found.
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /{user}/wall:
+    get:
+      summary: Wall of given user
+      operationId: wall
+      parameters:
+        - name: user
+          in: path
+          description: User to get wall
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Successfull response.
+          schema:
+            $ref: '#/definitions/UserMessages'
+        "404":
+          description: User not found.
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /{user}/timeline:
+    get:
+      summary: Timeline of given user
+      operationId: timeline
+      parameters:
+        - name: user
+          in: path
+          description: User to get timeline
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Successfull response.
+          schema:
+            $ref: '#/definitions/UserMessages'
+        "404":
+          description: User not found.
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  UserMessage:
+    required:
+      - userName
+      - message
+      - createdAt
+    properties:
+      userName:
+        type: string
+      message:
+        type: string
+      createdAt:
+        type: string
+
+  UserMessages:
+    type: array
+    items:
+      $ref: '#/definitions/UserMessage'
+
+  Error:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
